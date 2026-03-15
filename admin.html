@@ -36,7 +36,7 @@
         </select>
         
         <button class="btn-call" onclick="sendCall()">ԿԱՆՉԵԼ</button>
-
+        <button type="button" style="background: #e67e22; color: white;" onclick="clearTicket()">ՋՆՋԵԼ ՀԱՄԱՐԸ ԷԿՐԱՆԻՑ</button>
         <h3>ԳՈՎԱԶԴՆԵՐ</h3>
         <textarea id="ad-urls" placeholder="Լինքերը անջատիր կետ-ստորակետով (;)"></textarea>
         <button class="btn-ad" onclick="sendAds()">ԹԱՐՄԱՑՆԵԼ ԳՈՎԱԶԴՆԵՐԸ</button>
@@ -100,7 +100,15 @@
                 timestamp: Date.now() 
             });
         }
-
+    function clearTicket() {
+    // Ուղարկում ենք դատարկ արժեքներ կտրոնի համար
+    database.ref('queue_update').set({
+        ticket: "",
+        window: "",
+        logo: "",
+        ts: Date.now()
+    });
+}
         function clearAll() {
             database.ref('clear_system').set({ 
                 timestamp: Date.now() 
