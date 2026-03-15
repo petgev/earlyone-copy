@@ -133,32 +133,35 @@
         // --- FIREBASE ԼՍՈՂՆԵՐ ---
 
         // 1. Լսում ենք կանչերին
-        database.ref('queue_update').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (!data) return;
+       database.ref('queue_update').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
 
-            const content = document.getElementById('main-content');
-            document.getElementById('no-call-msg').style.display = 'none';
-            document.getElementById('full-screen-frame').style.display = 'none';
-            
-            document.getElementById('res-ticket').innerText = data.ticket;
-            document.getElementById('res-window').innerText = data.window;
-            document.getElementById('res-bank').innerHTML = data.logo ? `<img src="${data.logo}">` : '';
+    const content = document.getElementById('main-content');
+    const msg = document.getElementById('no-call-msg');
 
-            content.style.display = 'flex';
-            content.classList.remove('fade-blink');
-            void content.offsetWidth; 
-            content.classList.add('fade-blink');
+    // ՍՏՈՒԳՈՒՄ. Եթե տոմսի համարը դատարկ է, թաքցնում ենք ամբողջ տողը
+    if (!data.ticket || data.ticket.trim() === "") {
+        content.style.display = 'none'; // Թաքցնում է և՛ սլաքը, և՛ ամեն ինչ
+        msg.style.display = 'block';    // Ցույց է տալիս «Սպասեք հայտարարության»
+        return; 
+    }
 
-            const audio = document.getElementById('alert-sound');
-            audio.currentTime = 0;
-            audio.play().catch(()=>{});
+    // Եթե համարը կա, նոր ցույց ենք տալիս
+    msg.style.display = 'none';
+    document.getElementById('res-ticket').innerText = data.ticket;
+    document.getElementById('res-window').innerText = data.window;
+    document.getElementById('res-bank').innerHTML = data.logo ? `<img src="${data.logo}">` : '';
 
-            setTimeout(() => {
-                content.classList.remove('fade-blink');
-                content.style.opacity = "1";
-            }, 2400);
-        });
+    content.style.display = 'flex';
+    content.classList.remove('fade-blink');
+    void content.offsetWidth; 
+    content.classList.add('fade-blink');
+
+    const audio = document.getElementById('alert-sound');
+    audio.currentTime = 0;
+    audio.play().catch(()=>{});
+});
 
         // 2. Լսում ենք գովազդի թարմացմանը
         database.ref('ad_update').on('value', (snapshot) => {
