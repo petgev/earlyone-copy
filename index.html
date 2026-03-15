@@ -114,7 +114,8 @@ main {
     position: absolute;
     width: 100%;
     height: 100%;
-    object-fit: fill;
+    /* Սա է ամենակարևոր տողը. պահպանում է պրոպորցիաները և ոչինչ չի կտրում */
+    object-fit: contain;
     opacity: 0;
     transition: opacity 1s ease-in-out;
     z-index: 2;
@@ -126,10 +127,11 @@ main {
     left: 0;
     width: 100%;
     height: 100%;
+    /* Իսկ հետևի բլուրը թող լինի cover, որ դատարկ տեղ չմնա */
     background-size: cover;
     background-position: center;
     filter: blur(25px);
-    transform: scale(1.2);
+    transform: scale(1.1);
     opacity: 0;
     transition: opacity 1s ease-in-out;
     z-index: 1;
