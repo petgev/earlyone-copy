@@ -1,14 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hy">
 <head>
     <meta charset="UTF-8">
     <title>Admin Control - Jrvezh School</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #2c3e50; color: white; display: flex; justify-content: center; padding: 20px; }
-        .panel { background: rgba(255,255,255,0.1); padding: 25px; border-radius: 10px; width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .panel { background: rgba(255,255,255,0.1); padding: 25px; border-radius: 10px; width: 100%; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         h3 { border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; font-weight: 300; margin-top: 20px; }
         input, select, textarea, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: none; box-sizing: border-box; font-size: 14px; }
-        
         input, textarea, select { background: rgba(255,255,255,0.9); color: #333; }
         .btn-call { background: #27ae60; color: white; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 15px; }
         .btn-call:hover { background: #2ecc71; }
@@ -47,38 +49,62 @@
     </div>
 
     <script>
+        // --- FIREBASE CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6xviZrFZIfpbSOQXqsJyuvXlLVK3tgFU",
+            authDomain: "jrvezh-earlyone.firebaseapp.com",
+            databaseURL: "https://jrvezh-earlyone-default-rtdb.firebaseio.com",
+            projectId: "jrvezh-earlyone",
+            storageBucket: "jrvezh-earlyone.firebasestorage.app",
+            messagingSenderId: "438921283413",
+            appId: "1:438921283413:web:bfa9c0c37d85dd696451dc"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         function sendCall() {
             const select = document.getElementById('config-select');
             const selectedOption = select.options[select.selectedIndex];
-            
-            const data = { 
-                ticket: document.getElementById('ticket').value, 
-                window: selectedOption.value, // Պատուհանի թիվը (1, 2, 3...)
-                logo: selectedOption.getAttribute('data-logo') // Լոգոյի URL-ը
-            };
-            
-            if(!data.ticket) {
+            const ticketVal = document.getElementById('ticket').value;
+
+            if(!ticketVal) {
                 alert("Գրիր համարը");
                 return;
             }
 
-            localStorage.setItem('queue_update', JSON.stringify(data));
-            setTimeout(() => localStorage.removeItem('queue_update'), 100);
+            const data = { 
+                ticket: ticketVal, 
+                window: selectedOption.value,
+                logo: selectedOption.getAttribute('data-logo'),
+                timestamp: Date.now()
+            };
+            
+            // Ուղարկում ենք Firebase
+            database.ref('queue_update').set(data);
         }
 
         function sendAds() {
-            const data = { urls: document.getElementById('ad-urls').value };
-            localStorage.setItem('ad_update', JSON.stringify(data));
+            const urls = document.getElementById('ad-urls').value;
+            database.ref('ad_update').set({ 
+                urls: urls, 
+                timestamp: Date.now() 
+            });
         }
 
         function sendFull() {
-            const data = { url: document.getElementById('full-url').value };
-            localStorage.setItem('full_screen_update', JSON.stringify(data));
+            const url = document.getElementById('full-url').value;
+            database.ref('full_screen_update').set({ 
+                url: url, 
+                timestamp: Date.now() 
+            });
         }
 
         function clearAll() {
-            localStorage.setItem('clear_system', Date.now());
-            setTimeout(() => localStorage.removeItem('clear_system'), 100);
+            database.ref('clear_system').set({ 
+                timestamp: Date.now() 
+            });
         }
     </script>
 </body>
