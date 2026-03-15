@@ -101,9 +101,8 @@
             });
         }
     function clearTicket() {
-    // Ուղարկում ենք դատարկ արժեքներ կտրոնի համար
     database.ref('queue_update').set({
-        ticket: "",
+        ticket: "", // Սա կստիպի Index-ին թաքցնել ամեն ինչ
         window: "",
         logo: "",
         ts: Date.now()
